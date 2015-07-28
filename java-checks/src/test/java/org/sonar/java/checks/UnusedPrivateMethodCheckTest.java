@@ -24,11 +24,9 @@ import org.sonar.java.checks.verifier.JavaCheckVerifier;
 
 public class UnusedPrivateMethodCheckTest {
 
-  private final UnusedPrivateMethodCheck check = new UnusedPrivateMethodCheck();
-
   @Test
   public void test() {
-    JavaCheckVerifier.verify("src/test/files/checks/UnusedPrivateMethodCheck.java", check);
+    JavaCheckVerifier.verify("src/test/files/checks/UnusedPrivateMethod.java", new UnusedPrivateMethodCheck());
   }
 
 }

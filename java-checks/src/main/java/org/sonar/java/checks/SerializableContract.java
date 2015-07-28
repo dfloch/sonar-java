@@ -26,7 +26,7 @@ import java.util.Set;
 
 public final class SerializableContract {
 
-  private static final Set<String> SERIALIZABLE_CONTRACT_METHODS = Sets.newHashSet();
+  public static final Set<String> SERIALIZABLE_CONTRACT_METHODS = Sets.newHashSet();
 
   public static final String SERIAL_VERSION_UID_FIELD = "serialVersionUID";
 
