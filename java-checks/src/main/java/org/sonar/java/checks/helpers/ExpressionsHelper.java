@@ -17,23 +17,23 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.java.checks;
+package org.sonar.java.checks.helpers;
 
-import org.junit.Test;
-import org.sonar.java.checks.verifier.JavaCheckVerifier;
+import org.sonar.plugins.java.api.tree.ExpressionTree;
+import org.sonar.plugins.java.api.tree.ParenthesizedTree;
+import org.sonar.plugins.java.api.tree.Tree;
 
-import java.io.File;
-import java.util.ArrayList;
+public class ExpressionsHelper {
 
-public class NoTestInTestClassCheckTest {
+  private ExpressionsHelper() {
 
-  @Test
-  public void test() {
-    JavaCheckVerifier.verify("src/test/files/checks/NoTestInTestClassCheck.java", new NoTestInTestClassCheck());
   }
 
-  @Test
-  public void noClasspath() {
-    JavaCheckVerifier.verify("src/test/files/checks/NoTestInTestClassCheckNoClasspath.java", new NoTestInTestClassCheck(), new ArrayList<File>());
+  public static ExpressionTree skipParentheses(ExpressionTree tree) {
+    ExpressionTree result = tree;
+    while (result.is(Tree.Kind.PARENTHESIZED_EXPRESSION)) {
+      result = ((ParenthesizedTree) result).expression();
+    }
+    return result;
   }
 }

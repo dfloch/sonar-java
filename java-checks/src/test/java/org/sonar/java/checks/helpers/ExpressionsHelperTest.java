@@ -17,23 +17,22 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-package org.sonar.java.checks;
+package org.sonar.java.checks.helpers;
 
 import org.junit.Test;
-import org.sonar.java.checks.verifier.JavaCheckVerifier;
 
-import java.io.File;
-import java.util.ArrayList;
+import java.lang.reflect.Constructor;
 
-public class NoTestInTestClassCheckTest {
+import static org.fest.assertions.Assertions.assertThat;
 
-  @Test
-  public void test() {
-    JavaCheckVerifier.verify("src/test/files/checks/NoTestInTestClassCheck.java", new NoTestInTestClassCheck());
-  }
+public class ExpressionsHelperTest {
 
   @Test
-  public void noClasspath() {
-    JavaCheckVerifier.verify("src/test/files/checks/NoTestInTestClassCheckNoClasspath.java", new NoTestInTestClassCheck(), new ArrayList<File>());
+  public void private_constructor() throws Exception {
+    Constructor constructor = ExpressionsHelper.class.getDeclaredConstructor();
+    assertThat(constructor.isAccessible()).isFalse();
+    constructor.setAccessible(true);
+    constructor.newInstance();
   }
+
 }
