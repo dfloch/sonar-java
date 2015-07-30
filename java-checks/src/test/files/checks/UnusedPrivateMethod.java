@@ -20,6 +20,18 @@
 package org.sonar.java.checks.targets;
 
 import java.util.stream.IntStream;
+import javafx.fxml.FXML;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.Remove;
+import javax.enterprise.inject.Produces;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 
 public class UnusedPrivateMethod {
 
@@ -56,6 +68,7 @@ public class UnusedPrivateMethod {
   private int unusedPrivateMethod() { // Noncompliant {{Remove this unused private "unusedPrivateMethod" method.}}
     return 1;
   }
+
   private int unusedPrivateMethod(int a, String s) { // Noncompliant {{Remove this unused private "unusedPrivateMethod" method.}}
     return 1;
   }
@@ -63,9 +76,9 @@ public class UnusedPrivateMethod {
   public enum Attribute {
     ID("plop", "foo", true);
 
-    Attribute(String prettyName, String type, boolean hidden) { }
+    Attribute(String prettyName, String type, boolean hidden) {}
 
-    private Attribute(String name) { } // Noncompliant
+    private Attribute(String name) {} // Noncompliant
 
     Attribute(String prettyName, String[][] martrix, int i) { // Noncompliant {{Remove this unused private "Attribute" constructor.}}
     }
@@ -74,7 +87,9 @@ public class UnusedPrivateMethod {
 
   private class A {
     A(int a) {}
-    private A(){} // Noncompliant {{Remove this unused private "A" constructor.}}
+
+    private A() {} // Noncompliant {{Remove this unused private "A" constructor.}}
+
     private <T> T foo(T t) {
       return null;
     }
@@ -83,6 +98,45 @@ public class UnusedPrivateMethod {
       foo("");
     }
   }
+
+  @PostConstruct
+  private void unusedPrivateMethodPostConstruct() {}
+
+  @PreDestroy
+  private void unusedPrivateMethodPreDestroy() {}
+
+  @Produces
+  private void unusedPrivateMethodProduces() {}
+
+  @PostLoad
+  private void unusedPrivateMethodPostLoad() {}
+
+  @PrePersist
+  private void unusedPrivateMethodPrePersist() {}
+
+  @PrePersist
+  private void unusedPrivateMethodPrePersist() {}
+
+  @PostPersist
+  private void unusedPrivateMethodPostPersist() {}
+
+  @PreUpdate
+  private void unusedPrivateMethodPreUpdate() {}
+
+  @PostUpdate
+  private void unusedPrivateMethodPostUpdate() {}
+
+  @PreRemove
+  private void unusedPrivateMethodPreRemove() {}
+
+  @PostRemove
+  private void unusedPrivateMethodPostRemove() {}
+
+  @Remove
+  private void unusedPrivateMethodRemove() {}
+
+  @FXML
+  private void unusedPrivateMethodFXML() {}
 
 }
 
@@ -95,5 +149,4 @@ class Lambdas {
       .map((x)-> x*x )
     ;
   }
-
 }

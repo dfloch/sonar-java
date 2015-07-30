@@ -20,17 +20,18 @@
 package org.sonar.java.checks;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.check.Priority;
 import org.sonar.check.Rule;
 import org.sonar.plugins.java.api.semantic.Symbol;
+import org.sonar.plugins.java.api.semantic.Type;
+import org.sonar.plugins.java.api.tree.AnnotationTree;
 import org.sonar.plugins.java.api.tree.MethodTree;
 import org.sonar.plugins.java.api.tree.Tree;
 import org.sonar.squidbridge.annotations.ActivatedByDefault;
 import org.sonar.squidbridge.annotations.SqaleConstantRemediation;
 import org.sonar.squidbridge.annotations.SqaleSubCharacteristic;
-
-import java.util.List;
 
 @Rule(
   key = "UnusedPrivateMethod",
@@ -54,10 +55,37 @@ public class UnusedPrivateMethodCheck extends SubscriptionBaseVisitor {
     if (symbol.isPrivate() && symbol.usages().isEmpty()) {
       if (node.is(Tree.Kind.CONSTRUCTOR)) {
         addIssue(node, "Remove this unused private \"" + node.simpleName().name() + "\" constructor.");
-      } else if (!SerializableContract.SERIALIZABLE_CONTRACT_METHODS.contains(node.symbol().name())) {
+      } else if (!SerializableContract.SERIALIZABLE_CONTRACT_METHODS.contains(symbol.name()) && !hasExcludedAnnotation(node)) {
         addIssue(node, "Remove this unused private \"" + symbol.name() + "\" method.");
       }
     }
   }
 
+  private boolean hasExcludedAnnotation(MethodTree method) {
+    for (AnnotationTree annotation : method.modifiers().annotations()) {
+      Type annotationType = annotation.symbolType();
+      if (annotationType == null) {
+        return false;
+      }
+      if (annotationType.isUnknown() || annotationType.isArray()) {
+        return false;
+      }
+      if (annotationType.is("javax.annotation.PostConstruct")
+        || annotationType.is("javax.annotation.PreDestroy")
+        || annotationType.is("javax.enterprise.inject.Produces")
+        || annotationType.is("javax.persistence.PostLoad")
+        || annotationType.is("javax.persistence.PrePersist")
+        || annotationType.is("javax.persistence.PostPersist")
+        || annotationType.is("javax.persistence.PreUpdate")
+        || annotationType.is("javax.persistence.PostUpdate")
+        || annotationType.is("javax.persistence.PreRemove")
+        || annotationType.is("javax.persistence.PostRemove")
+        || annotationType.is("javax.ejb.Remove")
+        || annotationType.is("javafx.fxml.FXML")) {
+        return true;
+      }
+
+    }
+    return false;
+  }
 }
